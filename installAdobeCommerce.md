@@ -11,6 +11,8 @@ https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/c
 
 ### Magento Open Source Edition / Community Edition CE
 ```shell
+mkdir html
+
 composer global config http-basic.repo.magento.com <public_key/username> <private_key/password>
 
 composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=2.4.0 ./
@@ -21,6 +23,8 @@ For this EE you MUST have keys, first you need to add keys and then create the c
 https://stackoverflow.com/questions/76779035/magento-2-fresh-install
 
 ```shell
+mkdir html
+
 composer global config http-basic.repo.magento.com <public_key/username> <private_key/password>
 
 composer create-project --repository-url=https://repo.magento.com/ magento/project-enterprise-edition=2.4.0 ./

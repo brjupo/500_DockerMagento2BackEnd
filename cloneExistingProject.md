@@ -14,7 +14,9 @@
   - [Base de datos  ](#base-de-datos--)
     - [Crear base de datos e importar  ](#crear-base-de-datos-e-importar--)
     - [Configuración de URLs de ambiente ](#configuración-de-urls-de-ambiente-)
+    - [IMPORTANTE! Evitar colisiones con Adobe Sensei en Saas Services](#evitar_colision_sensei)
     - [Configuración de cookie de ambiente ](#configuración-de-cookie-de-ambiente-)
+    - [Cambiar de Fastly a Build In Cache](#fastly_a_buildin)
   - [NGINX ](#nginx-)
   - [/etc/hosts ](#etchosts-)
   - [Docker (2da parte) ](#docker-2da-parte-)
@@ -417,14 +419,45 @@ quedando como muestra la imagen siguiente:
 *Figura 8. Configurando nuevas url*
 
 
+### IMPORTANTE! Evitar colisiones con Adobe Sensei en Saas Services como product Recomendations <a id="evitar_colision_sensei"></a>
+[Regresar a la tabla de contenido](#tableOfContents)
+
+```sql
+
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_connector_integration/sandbox_api_key'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_connector_integration/sandbox_private_key'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_connector_integration/production_api_key'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_connector_integration/production_private_key'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_id/project_id'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_id/project_name'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_id/environment_id'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_id/environment_name'; 
+UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/services_id/environment'; 
+
+```
+
+
 ### Configuración de cookie de ambiente <a id="cookie_ambiente"></a>
 [Regresar a la tabla de contenido](#tableOfContents)
 
 Para evitar conflictos en el loggeo del Administrador de Magento es necesario hacer este cambio
 
 ```sql
+SELECT * FROM core_config_data WHERE path = 'web/cookie/cookie_domain';
 UPDATE core_config_data SET value = 'dominio.dev' WHERE path = 'web/cookie/cookie_domain';
 ```
+
+### Cambiar de Fastly a Build In Cache <a id="fastly_a_buildin"></a>
+[Regresar a la tabla de contenido](#tableOfContents)
+
+Para mejorar la velocidad de respuesta en ambientes locales se deberá cambiar el "Caching Application" a *Built-in Cache*
+Store > Configuration > Advanced > System > Full Page Cache
+
+```sql
+SELECT * FROM core_config_data WHERE path = 'system/full_page_cache/caching_application'; 
+UPDATE core_config_data SET value='1' WHERE path = 'system/full_page_cache/caching_application';
+```
+
 
 ---
 
@@ -568,16 +601,6 @@ php bin/magento admin:user:create --admin-user=MyUserToLogin --admin-password=My
 ```
 
 Ingresa al admin con la URL dominio.dev/admin
-
-Para mejorar la velocidad de respuesta en ambientes locales se deberá cambiar el "Caching Application" a *Built-in Cache*
-Store > Configuration > Advanced > System > Full Page Cache
-
-
-También puedes hacer este cambio utilizando el siguiente query
-
-```sql
-UPDATE core_config_data SET value='1' WHERE path = 'system/full_page_cache/caching_application';
-```
 
 ---
 
