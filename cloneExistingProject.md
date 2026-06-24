@@ -15,8 +15,10 @@
     - [Crear base de datos e importar  ](#crear-base-de-datos-e-importar--)
     - [Configuración de URLs de ambiente ](#configuración-de-urls-de-ambiente-)
     - [IMPORTANTE! Evitar colisiones con Adobe Sensei en Saas Services](#evitar_colision_sensei)
+    - [Evitar error por configuración de método de pago](#evitar-error-por-configuración-de-método-de-pago)
     - [Configuración de cookie de ambiente ](#configuración-de-cookie-de-ambiente-)
     - [Cambiar de Fastly a Build In Cache](#fastly_a_buildin)
+    - [Enable templatehints by paramater. Useful for debug.](#enable_template_hints)
   - [NGINX ](#nginx-)
   - [/etc/hosts ](#etchosts-)
   - [Docker (2da parte) ](#docker-2da-parte-)
@@ -436,6 +438,12 @@ UPDATE core_config_data SET value = NULL WHERE path = 'services_connector/servic
 
 ```
 
+### Evitar error por configuración de método de pago <a id="evitar-error-por-configuración-de-método-de-pago"></a>
+[Regresar a la tabla de contenido](#tableOfContents)
+```sql
+UPDATE core_config_data SET value = NULL WHERE path = 'payment/payment_methods/sandbox_merchant_id'
+UPDATE core_config_data SET value = NULL WHERE path = 'payment/payment_methods/production_merchant_id';
+```
 
 ### Configuración de cookie de ambiente <a id="cookie_ambiente"></a>
 [Regresar a la tabla de contenido](#tableOfContents)
@@ -456,6 +464,21 @@ Store > Configuration > Advanced > System > Full Page Cache
 ```sql
 SELECT * FROM core_config_data WHERE path = 'system/full_page_cache/caching_application'; 
 UPDATE core_config_data SET value='1' WHERE path = 'system/full_page_cache/caching_application';
+```
+
+
+### Enable templatehints by paramater. Useful for debug. <a id="enable_template_hints"></a>
+
+```sql
+-- Enable Template Path Hints for Storefront
+INSERT INTO core_config_data (scope, scope_id, path, value)
+VALUES ('default', 0, 'dev/debug/template_hints_storefront', '1')
+ON DUPLICATE KEY UPDATE value = '1';
+
+-- Enable Hints for Storefront with URL Parameter
+INSERT INTO core_config_data (scope, scope_id, path, value)
+VALUES ('default', 0, 'dev/debug/template_hints_storefront_show_with_parameter', '1')
+ON DUPLICATE KEY UPDATE value = '1';
 ```
 
 
